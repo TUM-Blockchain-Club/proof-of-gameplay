@@ -25,7 +25,6 @@
   "author": "Phala Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^22.1.0",
     "@vitest/coverage-v8": "^2.0.5",
     "concurrently": "^9.0.1",
     "dotenv": "^16.4.5",
@@ -39,8 +38,8 @@
   "dependencies": {
     "@hono/zod-validator": "^0.2.2",
     "@phala/wapo-env": "^0.9.4",
-    "superjson": "^2.2.1",
     "hono": "4.5.6",
+    "superjson": "^2.2.1",
     "viem": "^2.19.9"
   }
 }
