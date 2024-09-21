@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import time
 
 from keyboard_tracking import calibrate_keyboard, get_homography_matrix, warp_frame
 from finger_key_mapping import create_keyboard_layout, map_fingertip_to_key, draw_keyboard_layout
@@ -39,6 +40,20 @@ def main():
     # Initialize fingertip history for press detection
     fingertips = [4, 8, 12, 16, 20]
     fingertip_history = {idx: [] for idx in fingertips}
+    press_detected = {idx: False for idx in fingertips}
+    threshold = 14  # Adjust based on testing
+
+    # Initialize keystroke management
+    max_simultaneous_keystrokes = 1
+    current_keystrokes = 0  # Counter for current keystrokes displayed
+
+    # Initialize keystroke rate limiter
+    keystroke_timestamps = []
+    max_keystrokes_per_window = 2  # Maximum keystrokes allowed in the time window
+    time_window = 1.0  # Time window in seconds
+    suppress_keystrokes = False
+    cooldown_start_time = None
+    cooldown_duration = 3.0  # Duration to suppress keystrokes after overload
 
     while cap.isOpened():
         success, frame = cap.read()
@@ -47,6 +62,26 @@ def main():
             break
 
         frame = cv2.flip(frame, 1)
+
+        # Get the current time
+        current_time = time.time()
+
+        # Remove old timestamps outside the time window
+        keystroke_timestamps = [t for t in keystroke_timestamps if current_time - t <= time_window]
+
+        # Check if the number of keystrokes exceeds the maximum allowed
+        if len(keystroke_timestamps) > max_keystrokes_per_window:
+            if not suppress_keystrokes:
+                suppress_keystrokes = True
+                cooldown_start_time = current_time
+                print("Keystroke overload detected. Suppressing outputs.")
+        
+        # Handle cooldown period
+        if suppress_keystrokes:
+            if current_time - cooldown_start_time >= cooldown_duration:
+                suppress_keystrokes = False
+                keystroke_timestamps.clear()
+                print("Resuming keystroke outputs.")
 
         # Convert the BGR image to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -76,7 +111,6 @@ def main():
                 for idx in fingertips:
                     landmark = hand_landmarks.landmark[idx]
                     x, y = int(landmark.x * w_orig), int(landmark.y * h_orig)
-                    z = landmark.z  # Relative depth value
 
                     # Transform the fingertip coordinate to the keyboard coordinate system
                     point = np.array([[[x, y]]], dtype='float32')
@@ -86,31 +120,52 @@ def main():
                     tx = int(tx)
                     ty = int(ty)
 
-                    # Update fingertip history
+                    # Apply vertical offset correction
+                    vertical_offset = -60  # Adjust based on testing
+                    ty_corrected = ty + vertical_offset
+
+                    # Ensure transformed points are within bounds
+                    if not (0 <= tx < width and 0 <= ty_corrected < height):
+                        continue
+
+                    # Update fingertip history with corrected ty
                     if len(fingertip_history[idx]) >= 5:
                         fingertip_history[idx].pop(0)
-                    fingertip_history[idx].append(z)
+                    fingertip_history[idx].append(ty_corrected)
 
                     # Compute velocity for press detection
                     if len(fingertip_history[idx]) == 5:
-                        z_values = fingertip_history[idx]
-                        velocity = z_values[-1] - z_values[0]
+                        y_values = fingertip_history[idx]
+                        velocity = y_values[-1] - y_values[0]
 
-                        # Threshold to detect key press
-                        if velocity > 0.02:  # Adjust the threshold as needed
-                            key = map_fingertip_to_key(tx, ty, keyboard_layout)
-                            if key:
-                                print(f"Key Press Detected: {key}")
-                                # Display the key on the warped frame
-                                cv2.putText(warped_frame, f"Pressed: {key}", (tx, ty - 30),
-                                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                        # Detect downward motion for key press
+                        if velocity > threshold and not press_detected[idx]:
+                            if current_keystrokes < max_simultaneous_keystrokes:
+                                key = map_fingertip_to_key(tx, ty, keyboard_layout)
+                                if key:
+                                    print(f"Key Press Detected: {key}")
+                                    cv2.putText(warped_frame, f"Pressed: {key}", (tx, ty - 30),
+                                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                                    current_keystrokes += 1  # Increment counter
+                                press_detected[idx] = True
+                        elif velocity < -threshold / 2 and press_detected[idx]:
+                            # Reset press_detected when finger moves up
+                            press_detected[idx] = False
+                            if current_keystrokes > 0:
+                                current_keystrokes -= 1  # Decrement counter
 
                     # Draw the fingertip on the warped frame
                     cv2.circle(warped_frame, (tx, ty), 5, (0, 0, 255), -1)
+        else:
+            # No hands detected; reset counters and states
+            fingertip_history = {idx: [] for idx in fingertips}
+            press_detected = {idx: False for idx in fingertips}
+            keystroke_timestamps.clear()
 
         # Display the original frame and the warped frame
         cv2.imshow('Original Frame', image)
         cv2.imshow('Warped Keyboard View', warped_frame)
+
 
         # Exit on pressing 'q'
         if cv2.waitKey(1) & 0xFF == ord('q'):

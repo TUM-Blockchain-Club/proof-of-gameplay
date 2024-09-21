@@ -39,6 +39,8 @@ def main():
     # Initialize fingertip history for press detection
     fingertips = [4, 8, 12, 16, 20]
     fingertip_history = {idx: [] for idx in fingertips}
+    press_detected = {idx: False for idx in fingertips}
+    threshold = 14  # Adjust based on testing
 
     while cap.isOpened():
         success, frame = cap.read()
@@ -76,7 +78,6 @@ def main():
                 for idx in fingertips:
                     landmark = hand_landmarks.landmark[idx]
                     x, y = int(landmark.x * w_orig), int(landmark.y * h_orig)
-                    z = landmark.z  # Relative depth value
 
                     # Transform the fingertip coordinate to the keyboard coordinate system
                     point = np.array([[[x, y]]], dtype='float32')
@@ -86,24 +87,31 @@ def main():
                     tx = int(tx)
                     ty = int(ty)
 
-                    # Update fingertip history
+                    # Ensure transformed points are within bounds
+                    if not (0 <= tx < width and 0 <= ty < height):
+                        continue
+
+                    # Update fingertip history with ty
                     if len(fingertip_history[idx]) >= 5:
                         fingertip_history[idx].pop(0)
-                    fingertip_history[idx].append(z)
+                    fingertip_history[idx].append(ty)
 
                     # Compute velocity for press detection
                     if len(fingertip_history[idx]) == 5:
-                        z_values = fingertip_history[idx]
-                        velocity = z_values[-1] - z_values[0]
+                        y_values = fingertip_history[idx]
+                        velocity = y_values[-1] - y_values[0]
 
-                        # Threshold to detect key press
-                        if velocity > 0.02:  # Adjust the threshold as needed
+                        # Detect downward motion for key press
+                        if velocity > threshold and not press_detected[idx]:
                             key = map_fingertip_to_key(tx, ty, keyboard_layout)
                             if key:
                                 print(f"Key Press Detected: {key}")
-                                # Display the key on the warped frame
                                 cv2.putText(warped_frame, f"Pressed: {key}", (tx, ty - 30),
                                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                                press_detected[idx] = True
+                        elif velocity < -threshold / 2:
+                            # Reset press_detected when finger moves up
+                            press_detected[idx] = False
 
                     # Draw the fingertip on the warped frame
                     cv2.circle(warped_frame, (tx, ty), 5, (0, 0, 255), -1)
