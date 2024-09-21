@@ -179,3 +179,32 @@ def draw_keyboard_layout(frame, keyboard_layout):
         text_y = y + (h + text_size[1]) // 2
         cv2.putText(frame, key, (text_x, text_y),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+        
+
+def draw_keyboard_layout2(frame, keyboard_layout, pressed_keys=None):
+    if pressed_keys is None:
+        pressed_keys = set()
+    for key_info in keyboard_layout:
+        x = int(key_info['x'])
+        y = int(key_info['y'])
+        w = int(key_info['width'])
+        h = int(key_info['height'])
+        key = key_info['key']
+
+        if key in pressed_keys:
+            color = (0, 255, 0)  # Green color for pressed keys
+            thickness = -1  # Fill the rectangle
+        else:
+            color = (200, 200, 200)  # Grey color for unpressed keys
+            thickness = 1  # Outline only
+
+        # Draw the key rectangle
+        cv2.rectangle(frame, (x, y), (x + w, y + h), color, thickness)
+
+        # Put the key label at the center of the rectangle
+        text_size = cv2.getTextSize(key, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)[0]
+        text_x = x + (w - text_size[0]) // 2
+        text_y = y + (h + text_size[1]) // 2
+        cv2.putText(frame, key, (text_x, text_y),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
