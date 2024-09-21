@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebRTC Test Client</title>
+</head>
+<body>
+  <video id="remoteVideo" autoplay playsinline style="width: 100%; height: auto;"></video>
+
+  <script>
+    const remoteVideo = document.getElementById('remoteVideo');
+    const socket = new WebSocket('ws://10.51.2.233:8080'); // Replace with your server URL
+    let peerConnection;
+    const configuration = {
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    };
+
+    socket.onmessage = async (event) => {
+      const data = JSON.parse(event.data);
+
+      switch (data.type) {
+        case 'offer':
+          await handleOffer(data);
+          break;
+
+        case 'candidate':
+          if (peerConnection) {
+            peerConnection.addIceCandidate(new RTCIceCandidate(data));
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    async function handleOffer(offer) {
+      peerConnection = new RTCPeerConnection(configuration);
+
+      peerConnection.onicecandidate = ({ candidate }) => {
+        if (candidate) {
+          socket.send(JSON.stringify({
+            type: 'candidate',
+            candidate: candidate.candidate,
+            sdpMid: candidate.sdpMid,
+            sdpMLineIndex: candidate.sdpMLineIndex,
+          }));
+        }
+      };
+
+      peerConnection.ontrack = (event) => {
+        remoteVideo.srcObject = event.streams[0];
+      };
+
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      socket.send(JSON.stringify({
+        type: answer.type,
+        sdp: answer.sdp,
+      }));
+    }
+  </script>
+</body>
+</html>
