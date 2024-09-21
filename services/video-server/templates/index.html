@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Stream</title>
+</head>
+<body>
+    <h1>Live Video Stream</h1>
+    <img id="video_feed" src="" alt="Video Feed" width="640" height="480">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/video');
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('update_frame', function(data) {
+            var img = document.getElementById('video_feed');
+            img.src = 'data:image/jpeg;base64,' + data;
+        });
+    </script>
+</body>
+</html>
