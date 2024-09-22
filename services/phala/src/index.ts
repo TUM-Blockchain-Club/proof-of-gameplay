@@ -190,10 +190,50 @@ app.get("/", async (c) => {
   return c.json(json);
 });
 
-app.post("/", async (c) => {
-  const data = await c.req.json();
-  console.log("user payload in JSON:", data);
-  return c.json(data);
+// New endpoint to receive mapped data from another program and perform attestation
+app.post("/attest", async (c) => {
+  try {
+    // Parse JSON data from the request body
+    const data = await c.req.json();
+
+    // Log the incoming data to check its structure
+    console.log("Received data for attestation:", data);
+
+    // Validate that timestamps and keystrokes are arrays
+    if (
+      !Array.isArray(data.timestamps) ||
+      !Array.isArray(data.keystrokes) ||
+      !Array.isArray(data.aiTimestamps) ||
+      !Array.isArray(data.aiKeystrokes)
+    ) {
+      console.error(
+        "Invalid data format: timestamps and keystrokes must be arrays"
+      );
+    }
+
+    // Proceed with processing (e.g., calculating DTW score and creating proof)
+    const dtwScore = simulateDTWScore(); // Replace with actual logic
+    const secretSalt = process.env.SECRET_SALT || "SALTY_BAE";
+    const account = getECDSAAccount(secretSalt);
+    const proof = createProof(account, dtwScore);
+    const signedProof = await storeProof(account, proof);
+
+    // Return the signed proof response
+    return c.json(signedProof);
+  } catch (error) {
+    // Check if error is an instance of Error
+    if (error instanceof Error) {
+      console.error("Error processing /attest:", error.message);
+      return c.json({ error: "Internal Server Error: " + error.message }, 500);
+    } else {
+      // Handle the case where error is not of type Error
+      console.error("Unknown error:", error);
+      return c.json(
+        { error: "Internal Server Error: An unknown error occurred." },
+        500
+      );
+    }
+  }
 });
 
 export default handle(app);
