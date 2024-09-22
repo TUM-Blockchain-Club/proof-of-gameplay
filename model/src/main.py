@@ -6,7 +6,7 @@ import time
 from keyboard_tracking import calibrate_keyboard, get_homography_matrix, warp_frame
 from finger_key_mapping import create_keyboard_layout, map_fingertip_to_key, draw_keyboard_layout
 
-def main():
+def main(on_press=None):
     # Start capturing video input
     # live webcam feed
     #   0 => default webcam
@@ -116,8 +116,6 @@ def main():
                     point = np.array([[[x, y]]], dtype='float32')
                     transformed_point = cv2.perspectiveTransform(point, h_matrix)
 
-                    
-
                     tx, ty = transformed_point[0][0]
                     tx = int(tx)
                     ty = int(ty)
@@ -149,6 +147,8 @@ def main():
                                     cv2.putText(warped_frame, f"Pressed: {key}", (tx, ty - 30),
                                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
                                     current_keystrokes += 1  # Increment counter
+                                    if on_press:
+                                        on_press(key)
                                 press_detected[idx] = True
                         elif velocity < -threshold / 2 and press_detected[idx]:
                             # Reset press_detected when finger moves up

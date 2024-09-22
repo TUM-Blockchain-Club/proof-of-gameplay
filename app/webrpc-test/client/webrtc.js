@@ -51,7 +51,7 @@ function captureFrame() {
 // send captured frames to python backend for processing
 async function sendFrameToMLModel() {
     const frame = captureFrame();
-    const response = await fetch('TODO/process_frame', {
+    const response = await fetch('localhost:5050/process_frame', {
         method: 'POST',
         body: JSON.stringify({ frame: frame }),
         headers: {
