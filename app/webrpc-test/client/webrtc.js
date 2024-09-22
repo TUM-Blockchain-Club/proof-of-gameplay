@@ -1,9 +1,9 @@
 const remoteVideo = document.getElementById('remoteVideo');
 let peerConnection;
 const config = {
-    'iceServers': [{ 'urls': 'TODO' }] // todo fill this
+    'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] // todo fill this
 };
-const signalingServer = new WebSocket('TODO');
+const signalingServer = new WebSocket('ws://10.51.2.233:8080');
 
 // Create a peer connection and set up event listeners
 function startCall() {
