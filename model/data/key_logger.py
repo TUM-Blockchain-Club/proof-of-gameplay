@@ -112,10 +112,6 @@ with open('key_log.csv', 'w', newline='', buffering=1) as csvfile:
             # Key release without a corresponding key press
             pass  # Ignore or handle as needed
 
-        # Optional: Exit on pressing ESC
-        if key == keyboard.Key.esc:
-            return False  # Stop listener
-
     # Start the keyboard listener
     with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
         try:
