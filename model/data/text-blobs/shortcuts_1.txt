@@ -1,0 +1,29 @@
+Command + C
+Command + V
+Option + Command + Esc
+Command + Shift + 3
+Command + Shift + 4
+Command + Space
+Control + Command + Q
+Control + Option + Command + Power
+Command + Tab
+Shift + Command + N
+Command + Shift + G
+Command + Shift + Delete
+Fn + F11
+Command + Left Arrow
+Command + Right Arrow
+Command + Down Arrow
+Command + Up Arrow
+Control + Left Arrow
+Control + Right Arrow
+Command + Control + F
+Option + Shift + Volume Up (F12)
+Option + Shift + Volume Down (F11)
+Fn + Left Arrow
+Fn + Right Arrow
+Command + Option + R
+Command + Option + D
+Option + Command + P + R
+Control + Command + Space
+Command + Option + Eject

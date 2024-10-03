@@ -1,0 +1,100 @@
+E E E
+R R
+T T T T
+I I
+O O
+S S S S S
+N N
+D D
+P P
+F F F
+H H H
+L L
+C C C
+U U
+A A A
+Z Z Z
+X X
+W W
+B B B
+M M
+J J
+V V V V
+Q Q
+K K K
+E E E
+O O
+T T
+L L
+F F
+G G G
+I I I
+Y Y
+N N N N
+S S
+X X
+C C
+U U U
+D D D
+R R R
+Z Z Z
+M M
+P P
+H H H H
+K K K
+B B
+Q Q
+F F
+J J
+A A A A
+V V
+W W
+O O O
+L L L
+U U
+E E E
+S S S
+I I I
+Y Y
+D D
+G G
+Z Z Z
+C C
+B B
+X X
+M M M
+N N
+Q Q
+F F F
+R R
+H H H H
+V V
+P P
+W W
+J J
+K K
+L L
+T T T T
+A A A
+S S
+O O
+D D D
+G G G
+I I
+Z Z
+Y Y
+F F
+C C
+X X
+N N
+M M M
+L L L
+Q Q Q
+K K
+W W W
+R R
+P P
+H H
+V V V
+U U U
+T T

@@ -1,0 +1,29 @@
+Command + Option + Shift + V
+Command + Option + Shift + C
+Command + Option + Shift + H
+Command + Option + Shift + M
+Control + Option + Command + Power
+Command + Control + Shift + Power
+Fn + F1
+Fn + F8
+Command + Option + Control + F
+Control + Command + Shift + 3
+Option + Command + Shift + 4
+Option + Command + Shift + 3
+Command + Shift + A
+Command + Option + Shift + N
+Command + Option + Shift + Space
+Command + Option + Shift + Delete
+Command + Option + Shift + Up Arrow
+Command + Option + Shift + Down Arrow
+Command + Shift + Left Arrow
+Command + Shift + Right Arrow
+Option + Command + Tab
+Option + Command + Control + Left Arrow
+Option + Command + Control + Right Arrow
+Command + Control + Space
+Command + Option + Shift + Volume Down
+Command + Option + Shift + Volume Up
+Fn + F3
+Fn + F4
+Command + Option + Escape
