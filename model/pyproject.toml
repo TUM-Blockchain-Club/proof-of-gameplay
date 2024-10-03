@@ -1,16 +1,25 @@
-[tool.poetry]
+[project]
+authors = [{name = "Lucas Aschenbach", email = "Lucas.Aschenbach@gmail.com"}]
+dependencies = ["mediapipe>=0.10.15,<0.11"]
+description = "Add a short description here"
 name = "model"
+requires-python = ">= 3.11"
 version = "0.1.0"
-description = ""
-authors = ["Lucas Aschenbach <Lucas.Aschenbach@gmail.com>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.10"
-opencv-python = "^4.10.0.84"
-mediapipe = "^0.10.15"
-
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+model = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+pynput = ">=1.7.7,<2"
+numpy = "==1.24.4"
+opencv = ">=4.10.0,<5"

@@ -1,2 +1,6 @@
 data/*.mp4
 src/__pycache__
+
+# pixi environments
+.pixi
+*.egg-info
