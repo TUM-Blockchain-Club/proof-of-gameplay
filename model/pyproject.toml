@@ -23,3 +23,5 @@ model = { path = ".", editable = true }
 pynput = ">=1.7.7,<2"
 numpy = "==1.24.4"
 opencv = ">=4.10.0,<5"
+pandas = ">=2.2.3,<3"
+python-dateutil = ">=2.9.0,<3"

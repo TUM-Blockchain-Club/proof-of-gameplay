@@ -1,4 +1,7 @@
 data/**/*.mp4
+data/**/*.npy
+data/**/*.npz
+
 src/__pycache__
 
 # pixi environments
