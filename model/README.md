@@ -15,10 +15,12 @@
 2. For each file, a window will pop up asking you to select the frame where the first key press occurs. This is to match the key press events with the video frames.
 3. Two new files will be created in the `data/processed/` directory: `<file-name>.npy` for the inputs and `<file-name>_labels.npy` for the labells. Example: `typing_mixed_1_lucas_1.npy` and `typing_mixed_1_lucas_1_labels.npy`. Furthermore, the `keys.names` file will be updated with any new keys found in the data.
 
-<figure style="margin: auto; max-width: 400px;">
-    <img src="./docs/assets/video_preprocessing_preview.png" alt="Video Preprocessing Preview" style="width:100%">
-    <figcaption style="text-align: center; font-style: italic;">Example of a Preprocessed Video Frame</figcaption>
-</figure>
+<p align="center" style="max-width: 400px;">
+    <img src="./docs/assets/video_preprocessing_preview.png" alt="Video Preprocessing Preview" width="300px">
+    <p align="center">
+        <i>Example of a Preprocessed Video Frame<i>
+    </p>
+</p>
 
 # Training
 
