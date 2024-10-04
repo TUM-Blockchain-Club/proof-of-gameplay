@@ -1,15 +1,20 @@
 import cv2
 import os
 import sys
+import argparse
 import yaml
 import numpy as np
 import pandas as pd
 
 
-def process_video(video_path, output_dir="./processed", frame_rate=30):
+def process_video(video_path, output_path, force=False):
     """
     Convert video into a sequence of square grayscale frames and save as a numpy array.
     """
+    if os.path.exists(output_path) and not force:
+        print(f"Processed video file {output_path} already exists. Use -f to overwrite.")
+        return
+
     cap = cv2.VideoCapture(video_path)
     success = True
     frames = []
@@ -27,15 +32,13 @@ def process_video(video_path, output_dir="./processed", frame_rate=30):
             frames.append(resized_frame)
     # Save frames as a numpy array
     video = np.stack(frames, axis=0)
-    filename = os.path.basename(video_path).split('.')[0]
-    file_path = os.path.join(output_dir, f"{filename}.npy")
-    np.save(file_path, video)
+    np.save(output_path, video)
 
     cap.release()
-    print(f"Video processed and saved to {file_path}")
+    print(f"Video processed and saved to {output_path}")
 
 
-def sync_video(video_path, keypress_csv, config_path=None):
+def sync_video(video_path, keypress_csv, config_path, force=False):
     """
     Allows the user to synchronize the video with keypress events by selecting the frame corresponding to the first keypress.
 
@@ -52,14 +55,14 @@ def sync_video(video_path, keypress_csv, config_path=None):
     sync_frame = None
 
     # Check if <file_name>_config.yaml already exists with synchronization info
-    if config_path is not None and os.path.exists(config_path):
+    if os.path.exists(config_path) and not force:
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
             if config['frame_start'] and config['frame_num'] and config['frame_rate']:
-                print("Synchronization info taken from config file.")
+                print("Synchronization info taken from config file. Use -f to overwrite.")
                 return config['frame_start'], config['frame_num'], config['frame_rate']
             elif config['frame_start']:
-                print("Synchronization info taken from config file.")
+                print("Synchronization info taken from config file. Use -f to overwrite.")
                 sync_frame = config['frame_start']
     
     # Load keypress events
@@ -216,7 +219,7 @@ def update_key_names(csv_path, keymap_path="keys.names"):
     print(f"Key names saved to {keymap_path}")
 
 
-def generate_labels(keypress_csv, key_names_file, frame_start, frame_num, frame_rate=30, output_dir="./processed"):
+def generate_labels(keypress_csv, key_names_file, labels_path, frame_start, frame_num, frame_rate=30, force=False):
     """
     Generate a label file mapping frame indices to key events.
 
@@ -228,6 +231,9 @@ def generate_labels(keypress_csv, key_names_file, frame_start, frame_num, frame_
         frame_rate (int): Frame rate of the video.
         output_dir (str): Directory to save the label file.
     """
+    if os.path.exists(labels_path) and not force:
+        print(f"Labels file {labels_path} already exists. Use -f to overwrite.")
+        return
 
     # Load key names and create mappings
     with open(key_names_file, 'r') as f:
@@ -259,25 +265,28 @@ def generate_labels(keypress_csv, key_names_file, frame_start, frame_num, frame_
         labels[frame_idx] = [key_index, event_type_bit]
 
     # Save labels to a file
-    filename = os.path.basename(keypress_csv).split('.')[0]
-    labels_path = os.path.join(output_dir, f"{filename}_labels.npy")
     np.save(labels_path, labels)
     print(f"Labels saved to {labels_path}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python process_data.py file_name1 file_name2 ...")
-        sys.exit(1)
-    
-    for file_name in sys.argv[1:]:
+    parser = argparse.ArgumentParser(description="Process video data for keypress recognition.")
+    parser.add_argument('-f', '--force', action='store_true', help="Overwrite existing files.")
+    parser.add_argument('file_names', nargs='+', help="List of file names to process.")
+    args = parser.parse_args()
+
+    force = args.force
+
+    for file_name in args.file_names:
         video_path = os.path.join('raw', file_name + '.mp4')
         csv_path = os.path.join('raw', file_name + '.csv')
+        input_path = os.path.join('processed', file_name + '.npy')
         config_path = os.path.join('processed', file_name + '_config.yaml')
+        labels_path = os.path.join('processed', file_name + '_labels.npy')
 
-        process_video(video_path)
+        process_video(video_path, input_path, force)
 
         update_key_names(csv_path)
 
-        frame_start, frame_num, frame_rate = sync_video(video_path, csv_path, config_path)
-        generate_labels(csv_path, 'keys.names', frame_start, frame_num, frame_rate)
+        frame_start, frame_num, frame_rate = sync_video(video_path, csv_path, config_path, force)
+        generate_labels(csv_path, 'keys.names', labels_path, frame_start, frame_num, frame_rate, force)
