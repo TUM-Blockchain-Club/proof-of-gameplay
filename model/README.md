@@ -18,7 +18,7 @@
 <p align="center" style="max-width: 400px;">
     <img src="./docs/assets/video_preprocessing_preview.png" alt="Video Preprocessing Preview" width="300px">
     <p align="center">
-        <i>Example of a Preprocessed Video Frame<i>
+        <i>Example of a Preprocessed Video Frame</i>
     </p>
 </p>
 
