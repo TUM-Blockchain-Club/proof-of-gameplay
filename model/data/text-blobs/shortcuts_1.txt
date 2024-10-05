@@ -10,7 +10,7 @@ Command + Tab
 Shift + Command + N
 Command + Shift + G
 Command + Shift + Delete
-Fn + F11
+Command + R
 Command + Left Arrow
 Command + Right Arrow
 Command + Down Arrow
@@ -20,8 +20,8 @@ Control + Right Arrow
 Command + Control + F
 Option + Shift + Volume Up (F12)
 Option + Shift + Volume Down (F11)
-Fn + Left Arrow
-Fn + Right Arrow
+Left Arrow
+Right Arrow
 Command + Option + R
 Command + Option + D
 Option + Command + P + R

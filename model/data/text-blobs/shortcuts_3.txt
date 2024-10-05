@@ -4,8 +4,8 @@ Command + Option + Shift + H
 Command + Option + Shift + M
 Control + Option + Command + Power
 Command + Control + Shift + Power
-Fn + F1
-Fn + F8
+Command + Option + Control + Left Arrow
+Command + Option + Control + Right Arrow
 Command + Option + Control + F
 Control + Command + Shift + 3
 Option + Command + Shift + 4
@@ -24,6 +24,6 @@ Option + Command + Control + Right Arrow
 Command + Control + Space
 Command + Option + Shift + Volume Down
 Command + Option + Shift + Volume Up
-Fn + F3
-Fn + F4
+Control + Option + E
+Control + Option + Q
 Command + Option + Escape
