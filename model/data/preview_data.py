@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     show_all_events = args.all
 
-    for file_name in sys.argv[1:]:
+    for file_name in args.file_names:
         inputs_path = os.path.join('processed', f"{file_name}.npy")
         labels_path = os.path.join('processed', f"{file_name}_labels.npy")
 
