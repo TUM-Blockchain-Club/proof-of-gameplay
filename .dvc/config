@@ -1,0 +1,5 @@
+[core]
+    remote = tbc-drive
+['remote "tbc-drive"']
+    url = gdrive://0APuRyssmqP4NUk9PVA/dvcstore
+    gdrive_acknowledge_abuse = true
