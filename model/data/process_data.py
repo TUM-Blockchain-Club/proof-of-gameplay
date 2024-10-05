@@ -210,7 +210,7 @@ def update_key_names(csv_path, keymap_path="keys.names"):
     with open(keymap_path, 'r+') as f:
         keymap = [line.strip() for line in f.readlines()]
         for vk in keypress_vk:
-            if vk not in keymap:
+            if str(vk) not in keymap:
                 f.write(f"{vk}\n")
     print(f"Key Value Keys saved to {keymap_path}")
 
