@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 import os
-import sys
 import argparse
 
 def preview_data(video_npy_path, labels_npy_path, key_names_file, show_all_events, frame_rate=30):
@@ -98,7 +97,7 @@ def preview_data(video_npy_path, labels_npy_path, key_names_file, show_all_event
 
     cv2.destroyAllWindows()
 
-# Example usage:
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Preview the video data with key press events.")
     parser.add_argument('-a', '--all', action='store_true', help="Show all key-events in preview. By default, only key-down events are shown.")
