@@ -252,7 +252,7 @@ def generate_labels(keypress_csv, key_vks_file, labels_path, frame_start, frame_
         frame_idx = int(frame_start + frame_diff)
 
         # Key vk to index, merge key-name and key-char
-        key_vk = keypress_event['key-vk']
+        key_vk = str(keypress_event['key-vk'])
         key_index = key_vk_to_index[key_vk]
         # Event type to bit: 1 for key-down, 0 for key-up
         event_type = keypress_event['event-type']
