@@ -206,20 +206,16 @@ def update_key_names(csv_path, keymap_path="keys.names"):
         keymap_path (str): Path to the output .names file.
     """
     keypress_events = pd.read_csv(csv_path)
-    keypress_keynames = keypress_events['key-name'].unique()
-    keypress_keychars = keypress_events['key-char'].unique()
-    with open(keymap_path, 'a+') as f:
-        key_names = [line.strip() for line in f.readlines()]
-        for key in keypress_keynames:
-            if key not in key_names:
-                f.write(f"{key}\n")
-        for key in keypress_keychars:
-            if key not in key_names:
-                f.write(f"{key}\n")
-    print(f"Key names saved to {keymap_path}")
+    keypress_vk = keypress_events['key-vk'].unique()
+    with open(keymap_path, 'r+') as f:
+        keymap = [line.strip() for line in f.readlines()]
+        for vk in keypress_vk:
+            if vk not in keymap:
+                f.write(f"{vk}\n")
+    print(f"Key Value Keys saved to {keymap_path}")
 
 
-def generate_labels(keypress_csv, key_names_file, labels_path, frame_start, frame_num, frame_rate=30, force=False):
+def generate_labels(keypress_csv, key_vks_file, labels_path, frame_start, frame_num, frame_rate=30, force=False):
     """
     Generate a label file mapping frame indices to key events.
 
@@ -236,9 +232,9 @@ def generate_labels(keypress_csv, key_names_file, labels_path, frame_start, fram
         return
 
     # Load key names and create mappings
-    with open(key_names_file, 'r') as f:
-        key_names = [line.strip() for line in f.readlines()]
-    key_name_to_index = {key_name: idx for idx, key_name in enumerate(key_names)}
+    with open(key_vks_file, 'r') as f:
+        key_vks = [line.strip() for line in f.readlines()]
+    key_vk_to_index = {key_vk: idx for idx, key_vk in enumerate(key_vks)}
 
     # Initialize labels array
     # Each label is [key_index, event_type_bit]
@@ -255,9 +251,9 @@ def generate_labels(keypress_csv, key_names_file, labels_path, frame_start, fram
         frame_diff = time_diff * frame_rate
         frame_idx = int(frame_start + frame_diff)
 
-        # Key name to index, merge key-name and key-char
-        key_name = keypress_event['key-name'] if pd.notnull(keypress_event['key-name']) else keypress_event['key-char']
-        key_index = key_name_to_index[key_name.lower()]
+        # Key vk to index, merge key-name and key-char
+        key_vk = keypress_event['key-vk']
+        key_index = key_vk_to_index[key_vk]
         # Event type to bit: 1 for key-down, 0 for key-up
         event_type = keypress_event['event-type']
         event_type_bit = 1 if event_type == 'key down' else 0
