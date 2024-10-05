@@ -1,0 +1,107 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="Page-1" id="hWmk9wWheE_fdwTrm1iu">
+    <mxGraphModel dx="1865" dy="1236" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-16" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="c5R6sbCwN-UjyJ-YpXKC-1" target="c5R6sbCwN-UjyJ-YpXKC-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-1" value="Game Server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="c5R6sbCwN-UjyJ-YpXKC-2" target="c5R6sbCwN-UjyJ-YpXKC-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-14" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="c5R6sbCwN-UjyJ-YpXKC-2" target="c5R6sbCwN-UjyJ-YpXKC-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-2" value="&lt;div&gt;Game Client&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-12" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="c5R6sbCwN-UjyJ-YpXKC-3" target="c5R6sbCwN-UjyJ-YpXKC-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="730" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-3" value="&lt;div&gt;Hawk Eye (App)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-4" value="&lt;div&gt;Smart Contract&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-5" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 1&lt;/h1&gt;&lt;p&gt;User Starts starts game on Game Client. Opens channel with Game Server.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="620" y="560" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-8" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 2&lt;/h1&gt;&lt;p&gt;Game server notifies hawk eye to start recording and after confirmation from app allows Game Client to start&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="790" y="560" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-9" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 0&lt;/h1&gt;&lt;p&gt;Hawk Eye connects to Game Server and listens for message (identifier linking to game client)&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="430" y="560" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-11" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 3&lt;/h1&gt;&lt;p&gt;Client and App keep sending game information to server until game ends&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="330" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-13" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 4&lt;/h1&gt;&lt;p&gt;After game ends, server runs ML-Model and verifications. If no issues, creates attestation for client&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="90" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-15" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 5&lt;/h1&gt;&lt;p&gt;Submit score and attestation to smart contract to get reward&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="210" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-18" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 6&lt;/h1&gt;&lt;p&gt;User claims tokens after winning competition&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="330" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-19" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="c5R6sbCwN-UjyJ-YpXKC-20" target="c5R6sbCwN-UjyJ-YpXKC-23" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-20" value="Game Server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="125" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-21" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" source="c5R6sbCwN-UjyJ-YpXKC-23" target="c5R6sbCwN-UjyJ-YpXKC-20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-22" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" source="c5R6sbCwN-UjyJ-YpXKC-23" target="c5R6sbCwN-UjyJ-YpXKC-26" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-23" value="&lt;div&gt;Game Client&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="485" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-24" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" source="c5R6sbCwN-UjyJ-YpXKC-25" target="c5R6sbCwN-UjyJ-YpXKC-20" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1870" y="185" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-25" value="&lt;div&gt;Hawk Eye (App)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1710" y="485" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-26" value="&lt;div&gt;Smart Contract&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="125" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-27" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 1&lt;/h1&gt;&lt;p&gt;User Starts starts game on Game Client. Opens channel with Game Server.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="565" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-28" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 2&lt;/h1&gt;&lt;p&gt;Click Button on App to start recording and connect to server&lt;br&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1930" y="565" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-29" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 0&lt;/h1&gt;&lt;p&gt;-&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="565" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-30" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 3&lt;/h1&gt;&lt;p&gt;Client and App send recordings to server after game ends and record stop was clicked&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1830" y="310" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-31" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 4&lt;/h1&gt;&lt;p&gt;After game ends, server runs ML-Model and verifications. If no issues, creates attestation for client&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1920" y="95" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-32" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 5&lt;/h1&gt;&lt;p&gt;Submit score and attestation to smart contract to get reward (call smart contract by hand)&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="215" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-33" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step 6&lt;/h1&gt;&lt;p&gt;User claims tokens after winning competition (call smart contract by hand)&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="335" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c5R6sbCwN-UjyJ-YpXKC-34" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Simplified Workflow&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="30" width="180" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
