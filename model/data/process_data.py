@@ -276,11 +276,11 @@ if __name__ == "__main__":
     for file_name in args.file_names:
         video_path = os.path.join('raw', file_name + '.mp4')
         csv_path = os.path.join('raw', file_name + '.csv')
-        input_path = os.path.join('processed', file_name + '.npy')
+        inputs_path = os.path.join('processed', file_name + '.npy')
         config_path = os.path.join('processed', file_name + '_config.yaml')
         labels_path = os.path.join('processed', file_name + '_labels.npy')
 
-        process_video(video_path, input_path, force)
+        process_video(video_path, inputs_path, force)
 
         update_key_names(csv_path)
 
