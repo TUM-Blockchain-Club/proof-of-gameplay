@@ -229,6 +229,10 @@ def convertData(videoData, inputData):
                     ninputData.append(1)
         except:
             return None,None
+        while len(ninputData) < len(nvideoData):
+            ninputData.append(0)
+        while len(nvideoData) < len(ninputData):
+            nvideoData.append(0)
     return np.array(nvideoData), np.array(ninputData), tinputData
 
 
