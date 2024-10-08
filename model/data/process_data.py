@@ -52,36 +52,33 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
     # Initialize variables
     current_frame = 0
     is_playing = False
-    sync_frame = None
+    sync_frames = []
+    sync_frame_num = 5
+
+    timestamp_start = None
 
     # Check if <file_name>_config.yaml already exists with synchronization info
     if os.path.exists(config_path) and not force:
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
-            if config['frame_start'] and config['frame_num'] and config['frame_rate']:
+            if config['timestamp_start'] and config['frame_num'] and config['frame_rate']:
                 print("Synchronization info taken from config file. Use -f to overwrite.")
-                return config['frame_start'], config['frame_num'], config['frame_rate']
-            elif config['frame_start']:
+                return config['timestamp_start'], config['frame_num'], config['frame_rate']
+            elif config['timestamp_start']:
                 print("Synchronization info taken from config file. Use -f to overwrite.")
-                sync_frame = config['frame_start']
+                timestamp_start = config['timestamp_start']
     
     # Load keypress events
     keypress_events = pd.read_csv(keypress_csv)
     # Ensure keypress_events is sorted by timestamp
     keypress_events = keypress_events.sort_values('timestamp').reset_index(drop=True)
 
-    # Extract the timestamp and details of the first keypress event
-    first_keypress_event = keypress_events.iloc[0]
-    first_keypress_timestamp = first_keypress_event['timestamp']
-    first_key_name = first_keypress_event['key-name']
-    first_event_type = first_keypress_event['event-type']
-
     # Open the video file
     cap = cv2.VideoCapture(video_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    if sync_frame is None:
+    if timestamp_start is None:
     
         # Create a named window
         cv2.namedWindow('Video Synchronization', cv2.WINDOW_NORMAL)
@@ -103,63 +100,64 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
         for line in instructions:
             print(line)
 
-        while True:
-            if is_playing or sync_frame is None:
-                # Set the frame position
-                cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
-                ret, frame = cap.read()
-                if not ret:
-                    print("End of video.")
-                    is_playing = False
-                    current_frame = total_frames - 1
-                    cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
-                    ret, frame = cap.read()
-                # Display the frame number and first keypress info
-                cv2.putText(frame, f'Frame: {current_frame}/{total_frames}', (10, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-                cv2.putText(frame, f'First Keypress: {first_key_name} ({first_event_type})', (10, 60),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                # Display controls
-                y0, dy = frame.shape[0] - 190, 25
-                for i, line in enumerate(instructions):
-                    y = y0 + i*dy
-                    cv2.putText(frame, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-                # Show the frame
-                cv2.imshow('Video Synchronization', frame)
-                if is_playing:
-                    current_frame += 1
-            else:
-                # When paused, just display the current frame
-                cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
-                ret, frame = cap.read()
-                # Display the frame number and first keypress info
-                cv2.putText(frame, f'Frame: {current_frame}/{total_frames}', (10, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-                cv2.putText(frame, f'First Keypress: {first_event_type} {first_key_name}', (10, 60),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                # Indicate synchronization frame
-                cv2.putText(frame, 'Synchronization Frame Selected', (10, 90),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                # Display controls
-                y0, dy = frame.shape[0] - 150, 25
-                for i, line in enumerate(instructions):
-                    y = y0 + i*dy
-                    cv2.putText(frame, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1)
-                cv2.imshow('Video Synchronization', frame)
+        while len(sync_frames) < sync_frame_num:
+            # Extract the timestamp and details of the current keypress event
+            next_keypress_event = keypress_events.iloc[len(sync_frames)]
+            next_keypress_timestamp = next_keypress_event['timestamp']
+            next_key_name = next_keypress_event['key-name']
+            next_event_type = next_keypress_event['event-type']
 
-            key = cv2.waitKey(30) & 0xFF
+            # Read the current frame
+            cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
+            ret, frame = cap.read()
+            if not ret:
+                print("End of video.")
+                is_playing = False
+                current_frame = total_frames - 1
+                cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
+                ret, frame = cap.read()
+            height, width, _ = frame.shape
+
+            # Display the frame number and first keypress info
+            cv2.putText(frame, f'Frame: {current_frame}/{total_frames}', (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            cv2.putText(frame, f'Next Keypress: {next_key_name} ({next_event_type})', (10, 60),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+            # Display controls
+            y0, dy = height - 190, 25
+            for i, line in enumerate(instructions):
+                y = y0 + i*dy
+                cv2.putText(frame, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            # Draw a red border if the frame is a sync frame
+            if current_frame in sync_frames:
+                cv2.rectangle(frame, (0, 0), (width, height), (0, 0, 255), 10)
+            # Show the frame
+            cv2.imshow('Video Synchronization', frame)
+
+            # Go to the next frame if playing
+            if is_playing:
+                current_frame += 1
+            
+            key = cv2.waitKey(int(1000 / fps)) & 0xFF
 
             if key == 27 or key == ord('q'):  # Esc or 'q' key to exit
                 print("Exiting without synchronization.")
                 cap.release()
                 cv2.destroyAllWindows()
-                return None
+                sys.exit(1) # Cannot proceed without knowing start frame
+
             elif key == ord(' '):  # Spacebar to play/pause
                 is_playing = not is_playing
             elif key == ord('\r') or key == ord('\n'):  # Enter key to select sync frame
-                sync_frame = current_frame
                 is_playing = False
-                print(f"Synchronization frame selected: {sync_frame}")
+                if not sync_frames or current_frame >= sync_frames[-1]:
+                    sync_frames.append(current_frame)
+                    print(f"Synchronization frame selected: {current_frame}")
+            elif key == 127:  # Backspace to remove sync frame
+                is_playing = False
+                if current_frame in sync_frames and current_frame >= sync_frames[-1]:
+                    sync_frames.remove(current_frame)
+                    print(f"Synchronization frame removed: {current_frame}")
             elif key == ord('D'):  # Key: Shift + D
                 is_playing = False
                 current_frame = min(current_frame + 30, total_frames - 1)
@@ -176,17 +174,30 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
             # Ensure current_frame stays within bounds
             current_frame = max(0, min(current_frame, total_frames - 1))
 
-            if sync_frame is not None and not is_playing:
-                # Synchronization frame selected, break the loop
-                break
-
     cap.release()
     cv2.destroyAllWindows()
+
+    # Compute timestamp of first frame base on the sync frames
+    # t_0 needs to satisfy round((t_i - t_0) * fps) = f_i
+    timestamp_start_lower_bound = None
+    timestamp_start_upper_bound = None
+    for idx, sync_frame in enumerate(sync_frames):
+        upper_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame - 0.5) / fps)
+        lower_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame + 0.5) / fps)
+        if timestamp_start_lower_bound is None or lower_bound > timestamp_start_lower_bound:
+            timestamp_start_lower_bound = lower_bound
+        if timestamp_start_upper_bound is None or upper_bound < timestamp_start_upper_bound:
+            timestamp_start_upper_bound = upper_bound
+    # Compute midpoint of upper and lower bound
+    timestamp_start = (timestamp_start_lower_bound + timestamp_start_upper_bound) / 2
+    timestamp_start = timestamp_start.item()
+    print(f"Timestamp precision: {timestamp_start_upper_bound - timestamp_start_lower_bound}")
+    print(f"Timestamps for sync frames: {timestamp_start}")
 
     # Save synchronization info to a config file
     if config_path is not None:
         config = {
-            'frame_start': sync_frame,
+            'timestamp_start': timestamp_start,
             'frame_num': total_frames,
             'frame_rate': fps
         }
@@ -194,7 +205,7 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
             yaml.dump(config, f)
         print(f"Synchronization info saved to {config_path}")
 
-    return sync_frame, total_frames, fps
+    return timestamp_start, total_frames, fps
 
 
 def update_key_names(csv_path, keymap_path="keys.names"):
@@ -215,7 +226,7 @@ def update_key_names(csv_path, keymap_path="keys.names"):
     print(f"Key Value Keys saved to {keymap_path}")
 
 
-def generate_labels(keypress_csv, key_vks_file, labels_path, frame_start, frame_num, frame_rate=30, force=False):
+def generate_labels(keypress_csv, key_vks_file, labels_path, timestamp_start, frame_num, frame_rate=30, force=False):
     """
     Generate a label file mapping frame indices to key events.
 
@@ -244,12 +255,10 @@ def generate_labels(keypress_csv, key_vks_file, labels_path, frame_start, frame_
     # Load keypress events
     keypress_events = pd.read_csv(keypress_csv)
 
-    frame_start_time = keypress_events.iloc[0]['timestamp']
-
     for _, keypress_event in keypress_events.iterrows():
-        time_diff = keypress_event['timestamp'] - frame_start_time
+        time_diff = keypress_event['timestamp'] - timestamp_start
         frame_diff = time_diff * frame_rate
-        frame_idx = int(frame_start + frame_diff)
+        frame_idx = int(frame_diff)
 
         # Key vk to index, merge key-name and key-char
         key_vk = str(keypress_event['key-vk'])
@@ -284,5 +293,5 @@ if __name__ == "__main__":
 
         update_key_names(csv_path)
 
-        frame_start, frame_num, frame_rate = sync_video(video_path, csv_path, config_path, force)
-        generate_labels(csv_path, 'keys.names', labels_path, frame_start, frame_num, frame_rate, force)
+        timestamp_start, frame_num, frame_rate = sync_video(video_path, csv_path, config_path, force)
+        generate_labels(csv_path, 'keys.names', labels_path, timestamp_start, frame_num, frame_rate, force)
