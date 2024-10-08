@@ -196,10 +196,30 @@ def simulate(inputs):
     ground = Ground(730) # Ground object
     pipes = [Pipe(700)] # List of pipes in the game
     points = 0 # Game score
-    aktFrame = 0
+    aktTime = 0
     running = True # Variable to check if the game is running
+    cnt = 0
+    x = 0
+    frameTime = 0
     while running: # While the game is running
-        if aktFrame < len(inputs) and inputs[aktFrame] == 1: #in this frame a jump was triggered
+        if points >= 0 and points < 10:
+            x = 25 # Game FPS
+        elif points >= 10 and points < 20:
+            x = 27
+        elif points >= 20 and points < 30:
+            x = 29
+        elif points >= 30 and points < 40:
+            x = 31
+        elif points >= 40 and points < 50:
+            x = 33
+        elif points >= 50 and points < 100:
+            x = 34
+        elif points >= 100:
+            x = 40
+
+        frameTime = 1/x
+        if cnt < len(inputs) and aktTime < inputs[cnt]: #in this frame a jump was triggered
+            cnt += 1
             for bird in birds:
                 bird.jump() # The bird jumps by calling the jump() function
             
@@ -240,7 +260,7 @@ def simulate(inputs):
 
         if len(birds) == 0:
             running = False
-        aktFrame += 1
+        aktTime += frameTime
     return points
 
 
@@ -248,5 +268,5 @@ def simulate(inputs):
 
 
 if __name__ == "__main__":
-    inputs = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-    print(simulate(inputs))
+    #inputs = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+    #print(simulate(inputs))

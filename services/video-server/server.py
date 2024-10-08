@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 import numpy as np
 from matching import match
 from simGame import simulate
+from testSign import sign
 import base64
 import sqlite3
 import logging
@@ -170,7 +171,7 @@ def verify():
     if videoData == None:
         return {"Error": "video data was not in the right format"}
     
-    videoData, inputData = convertData(videoData, inputData)
+    videoData, inputData, tinputData= convertData(videoData, inputData)
     if videoData is None or inputData is None:
         return {"Error": "video and input data cant be parsed"}
 
@@ -178,7 +179,7 @@ def verify():
     if corr < 0.5:
         return {"Error": "video and input data didnt match"}
 
-    score = simulate(inputData)
+    score = simulate(tinputData)
     sig = signScore(playerID, score)
     b64Sig = base64.b64encode(sig)
 
@@ -190,6 +191,7 @@ def verify():
 def convertData(videoData, inputData):
     nvideoData = []
     ninputData = []
+    tinputData = []
     startFrame = 0
     for row in videoData:
         try:
@@ -215,9 +217,11 @@ def convertData(videoData, inputData):
                 continue
             if len(ninputData) == 0:
                 ninputData.append(1)
+                tinputData.append(float(0))
                 startTime = float(row[csvTime])
             else:
                 relTime = float(row[csvTime]) - startTime
+                tinputData.append(relTime)
                 frameNumber = round(relTime*fps)
                 if frameNumber >= len(ninputData):
                     while len(ninputData) < frameNumber:
@@ -225,16 +229,14 @@ def convertData(videoData, inputData):
                     ninputData.append(1)
         except:
             return None,None
-    return np.array(nvideoData), np.array(ninputData)
+    return np.array(nvideoData), np.array(ninputData), tinputData
 
 
 
 #signs the string playerID:score with the private key of the Server
 def signScore(playerID, score):
-    private_key = Ed25519PrivateKey.generate() #here the real private key needs to be imported
-    #msg = bytes(str(playerID)+'#'+str(score), 'utf-8')
-    msg = bytes(str(score), 'utf-8') #just the score gets signed
-    return private_key.sign(msg)
+    return sign(score)
+    
 
 def getCsv(inputData):
     try:
