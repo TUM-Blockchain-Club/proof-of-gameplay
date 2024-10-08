@@ -23,3 +23,4 @@ def verify(id):
 insertVideo(20, b'lalalaafsfsdfslal')
 insertInput(20, b'lalalaaaaaaa')
 verify(20)
+

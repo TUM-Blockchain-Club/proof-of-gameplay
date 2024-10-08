@@ -1,5 +1,9 @@
 from flask import Flask, flash, request, redirect, url_for, g
 from werkzeug.utils import secure_filename
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+import numpy as np
+from matching import match
+from simGame import simulate
 import base64
 import sqlite3
 import logging
@@ -11,6 +15,10 @@ app = Flask(__name__)
 
 csvTime = "timestamp"
 csvKey = "keycode"
+csvFrame = "frame"
+csvEvent = "event"
+KeyUP = "Key up"
+fps = 30
 
 #returns if given playerID is a valid ID
 def isID(playerID):
@@ -166,73 +174,67 @@ def verify():
     if videoData is None or inputData is None:
         return {"Error": "video and input data cant be parsed"}
 
-    if not match(videoData, inputData):
+    corr = match(inputData, videoData)
+    if corr < 0.5:
         return {"Error": "video and input data didnt match"}
 
-    score = simulateGame(inputData)
+    score = simulate(inputData)
     sig = signScore(playerID, score)
+    b64Sig = base64.b64encode(sig)
 
-    return {"Signature": sig, "Error": "no Error"}
+    return {"Signature": b64Sig.decode('utf-8'), "Error": "no Error"}
 
 
 #checks for float conversions
+#creates event stream for every frame if a key was pressed 
 def convertData(videoData, inputData):
     nvideoData = []
     ninputData = []
+    startFrame = 0
     for row in videoData:
         try:
-            nvideoData.append((float(row[csvTime]),int(row[csvKey])))
+            event = row[csvEvent]
+            if event == KeyUP:
+                continue
+            frameNumber = int(row[csvFrame])
+            if len(nvideoData) == 0:
+                nvideoData.append(1)
+                startFrame = frameNumber
+            else:
+                relFrame = frameNumber - startFrame
+                while len(nvideoData) < relFrame:
+                    nvideoData.append(0)
+                nvideoData.append(1)
         except:
             return None,None
+    startTime = 0
     for row in inputData:
         try:
-            ninputData.append((float(row[csvTime]),int(row[csvKey])))
+            event = row[csvEvent]
+            if event == KeyUP:
+                continue
+            if len(ninputData) == 0:
+                ninputData.append(1)
+                startTime = float(row[csvTime])
+            else:
+                relTime = float(row[csvTime]) - startTime
+                frameNumber = round(relTime*fps)
+                if frameNumber >= len(ninputData):
+                    while len(ninputData) < frameNumber:
+                        ninputData.append(0)
+                    ninputData.append(1)
         except:
             return None,None
-    return nvideoData, ninputData
+    return np.array(nvideoData), np.array(ninputData)
 
 
-#returns true if video and input data match
-def match(videoData, inputData):
-
-    #can also be made fancy by adding how long the distance between keys are
-    wrongKeys = 0
-    #can be made fancy by punishing times not linearly 
-    timeOffset = 0.0
-    sizeV = len(videoData)
-    sizeI = len(inputData)
-
-    itSize = min(sizeV, sizeI)
-    for i in range(0,itSize-1):
-        timeDiffV = videoData[i+1][0] - videoData[i][0]
-        timeDiffI = inputData[i+1][0] - inputData[i][0]
-        timeOffset += abs(timeDiffI - timeDiffV)
-
-        if videoData[i][1] != inputData[i][1]:
-            wrongKeys += 1
-
-    return rating(wrongKeys, timeOffset, itSize)
-
-
-#can be made really fancy!!!
-#here one avg missed second equals one avg wrong key
-def rating(wrongKeys, timeOffset, itSize):
-    timeOffsetAvg = timeOffset/itSize
-    wrongKeysAvg = wrongKeysAvg/itSize
-
-    if wrongKeysAvg > 0.2:
-        return False
-    if timeOffsetAvg > 500:
-        return False
-    return True
-
-#returns the score of the game simulated by the inputData
-def simulateGame(inputData):
-    return 0
 
 #signs the string playerID:score with the private key of the Server
 def signScore(playerID, score):
-    return ""
+    private_key = Ed25519PrivateKey.generate() #here the real private key needs to be imported
+    #msg = bytes(str(playerID)+'#'+str(score), 'utf-8')
+    msg = bytes(str(score), 'utf-8') #just the score gets signed
+    return private_key.sign(msg)
 
 def getCsv(inputData):
     try:
