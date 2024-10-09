@@ -202,7 +202,7 @@ def verify():
         return {"Error": "video and input data didnt match"}
     print("matching successful!!!",file=sys.stderr)
     print("simulating game...",file=sys.stderr)
-    print(tinputData)
+    #print(tinputData)
     score = simulate(tinputData)
     print("player: " + str(playerID) + " got a proven score of: " + str(score),file=sys.stderr)
     print("Signing score...", file=sys.stderr)

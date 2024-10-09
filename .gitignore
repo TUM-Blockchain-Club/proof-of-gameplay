@@ -4,6 +4,9 @@
 # System
 .DS_Store
 
+#Databases
+.db
+
 node_modules
 
 target
