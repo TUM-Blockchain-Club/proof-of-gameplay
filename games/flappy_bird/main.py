@@ -9,6 +9,7 @@ import csv
 import time
 import requests
 import base64
+import json
 from io import StringIO
 
 # Screen settings: width and height
@@ -208,10 +209,13 @@ def insertVideo(id, content):
     #print(r.text)
 
 def verify(id):
-    json = {'playerID': id}
-    r = requests.post('http://127.0.0.1:5000/verify', json=json)
+    jsont = {'playerID': id}
+    r = requests.post('http://127.0.0.1:5000/verify', json=jsont)
     print("Server response after verifying:")
-    print(r.text)
+    js = json.loads(r.text)
+    att = list(base64.b64decode(bytes(js['Attestation'], 'utf-8')))
+    print("")
+    print("Attestation: " + str(att))
 
 # Main game function
 async def main():
@@ -312,8 +316,7 @@ async def main():
     #print(testF.getvalue())
     #id = int(random.random() * 1000000)
     id = 334486
-    print("Upload the video through the app with this id!")
-    print("Game id: " + str(id))
+    print("Upload the video through the app with this id: " + str(id))
     print("")
     content = bytes(testF.getvalue(), 'utf-8')
     print("you got a score of: " + str(points))
@@ -325,14 +328,16 @@ async def main():
         print("Uploaded inputs to server!")
     except:
         print("No connection to server")
+        return
 
     print("")
     print("Do you want to verify your result? [y] [n]")
     s = input()
     if s == "y":
         try:
-            print("")
             verify(id)
+            print("")
+            
         except:
             print("No connection to server")
     

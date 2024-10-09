@@ -10,6 +10,7 @@ import sqlite3
 import logging
 import csv
 import sys
+import random
 from io import StringIO
 
 app = Flask(__name__)
@@ -195,10 +196,11 @@ def verify():
     print("match given input keys against extracted keys",file=sys.stderr)
     print("")
     print("correlation threshold is: " + str(0.8),file=sys.stderr)
-    #corr = match(inputData, videoData)
-    corr = 1
+    videoData = alterInput(inputData)
+    corr = match(inputData, videoData)
+    #corr = 1
     print("got correlation of: " + str(corr),file=sys.stderr)
-    if corr < 0.5:
+    if corr < 0.8:
         delete_db(deleteVideoSQL, [playerID])
         delete_db(deleteInputSQL, [playerID])
         return {"Error": "video and input data didnt match"}
@@ -288,5 +290,15 @@ def getCsv(inputData):
     except:
         return None
 
+#not yet implemented
 def getVideoData(videoData):
     return []
+
+def alterInput(inputData):
+    videoData = []
+    for i in inputData:
+        if random.random() < 0.01:
+            videoData.append((i-1)*(-1))
+        else:
+            videoData.append(i)
+    return videoData

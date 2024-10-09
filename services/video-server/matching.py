@@ -22,7 +22,7 @@ def match(inputs, video):
     nInputs = inputsF/np.linalg.norm(inputsF)
     nVideo = videoF/np.linalg.norm(videoF)
     corr = np.dot(nInputs, nVideo)
-    print(corr)
+    #print(corr)
     return corr
     
 if __name__ == "__main__":
