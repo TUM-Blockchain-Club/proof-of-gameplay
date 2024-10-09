@@ -19,7 +19,7 @@ To recreate the database run:
 
 ```
 poetry run python
-from server import init\_db
-init\_db()
+from server import init_db
+init_db()
 ```
 
