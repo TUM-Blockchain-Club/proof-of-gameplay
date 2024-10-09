@@ -179,7 +179,7 @@ def verify():
         return {"Error": "data was not in csv format"}
     
     print("prepare video for ml model", file=sys.stderr)
-    #has to be implemented calling the ml model with the video data and returning list of dicts
+    #has to be implemented calling the ml model with the video data and returning list of key press events
     videoData = getVideoData(videoData)
     print("received extracted keys from ml model", file=sys.stderr)
     if videoData == None:
@@ -290,10 +290,12 @@ def getCsv(inputData):
     except:
         return None
 
-#not yet implemented
+#not yet implemented model not yet finished learning
 def getVideoData(videoData):
     return []
 
+
+#trys to emulate the ml models behavior in the worst way
 def alterInput(inputData):
     videoData = []
     for i in inputData:

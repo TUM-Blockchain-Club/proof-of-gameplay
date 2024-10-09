@@ -315,6 +315,7 @@ async def main():
         draw_screen(screen, birds, pipes, ground, points)
     #print(testF.getvalue())
     #id = int(random.random() * 1000000)
+    #fixed id for demo reasons
     id = 334486
     print("Upload the video through the app with this id: " + str(id))
     print("")
@@ -324,7 +325,9 @@ async def main():
     try:
         insertInput(id,content)
         print("")
-        insertVideo(id,b'testtest')
+        #will be replaced by the app uploading the video to the server not fully implemented yet
+        #will be relevent only if ml model is implemented
+        insertVideo(id,b'dummyValue')
         print("Uploaded inputs to server!")
     except:
         print("No connection to server")
