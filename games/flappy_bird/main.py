@@ -198,6 +198,17 @@ def insertInput(id, content):
     r = requests.post('http://127.0.0.1:5000/inputs', json=json)
     print(r.text)
 
+def insertVideo(id, content):   
+    fileContentB64 = base64.b64encode(content)
+    json = {'playerID': id, 'fileContent': fileContentB64.decode('utf-8')}
+    r = requests.post('http://127.0.0.1:5000/video', json=json)
+    print(r.text)
+
+def verify(id):
+    json = {'playerID': id}
+    r = requests.post('http://127.0.0.1:5000/verify', json=json)
+    print(r.text)
+
 # Main game function
 async def main():
     random.seed(1337)
@@ -295,13 +306,20 @@ async def main():
                 running = False
         draw_screen(screen, birds, pipes, ground, points)
     #print(testF.getvalue())
-    id = int(random.random() * 1000000)
+    #id = int(random.random() * 1000000)
+    id = 334486
     print("id: " + str(id))
     content = bytes(testF.getvalue(), 'utf-8')
     print("you got a score of: " + str(points))
     try:
         insertInput(id,content)
+        insertVideo(id,b'testtest')
         print("Uploaded inputs to server!")
+    except:
+        print("No connection to server")
+    input()
+    try:
+        verify(id)
     except:
         print("No connection to server")
 if __name__ == "__main__":
