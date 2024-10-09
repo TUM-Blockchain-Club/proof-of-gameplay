@@ -149,8 +149,9 @@ def verify():
     if not isID(playerID):
         return {"Error": "no valid playerID"}
     playerID = int(playerID)
-    print("Try to verify video and input data from player: " + str(playerID), file=sys.stderr)
+    print("try to verify video and input data from player: " + str(playerID), file=sys.stderr)
     print("fetch data from database", file=sys.stderr)
+    print("")
     videoData = query_db(requestVideoSQL, [playerID])
     inputData = query_db(requestInputSQL, [playerID])
 
@@ -184,7 +185,7 @@ def verify():
         delete_db(deleteVideoSQL, [playerID])
         delete_db(deleteInputSQL, [playerID])
         return {"Error": "video data was not in the right format"}
-    
+    print("")
     print("prepare extracted keys for matching", file=sys.stderr)
     videoData, inputData, tinputData= convertData(videoData, inputData)
     if videoData is None or inputData is None:
@@ -192,6 +193,7 @@ def verify():
         delete_db(deleteInputSQL, [playerID])
         return {"Error": "video and input data cant be parsed"}
     print("match given input keys against extracted keys",file=sys.stderr)
+    print("")
     print("correlation threshold is: " + str(0.8),file=sys.stderr)
     #corr = match(inputData, videoData)
     corr = 1
@@ -201,18 +203,21 @@ def verify():
         delete_db(deleteInputSQL, [playerID])
         return {"Error": "video and input data didnt match"}
     print("matching successful!!!",file=sys.stderr)
+    print("")
     print("simulating game...",file=sys.stderr)
     #print(tinputData)
     score = simulate(tinputData)
     print("player: " + str(playerID) + " got a proven score of: " + str(score),file=sys.stderr)
+    print("")
     print("Signing score...", file=sys.stderr)
     sig = signScore(playerID, score)
     print("Attestation: " + str(list(sig)))
     print("Use this to claim your reward!")
+    print("")
     b64Sig = base64.b64encode(sig)
     delete_db(deleteVideoSQL, [playerID])
     delete_db(deleteInputSQL, [playerID])
-    return {"Signature": b64Sig.decode('utf-8'), "Error": "no Error", "Score": score}
+    return {"Attestation": b64Sig.decode('utf-8'), "Error": "no Error", "Score": score}
 
 
 #checks for float conversions

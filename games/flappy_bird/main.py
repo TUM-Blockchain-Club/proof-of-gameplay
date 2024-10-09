@@ -1,6 +1,7 @@
 # In the future, run on the web like itch.io, gamejolt, etc
-
-import pygame 
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame
 import os
 import random
 import asyncio
@@ -196,17 +197,20 @@ def insertInput(id, content):
     fileContentB64 = base64.b64encode(content)
     json = {'playerID': id, 'fileContent': fileContentB64.decode('utf-8')}
     r = requests.post('http://127.0.0.1:5000/inputs', json=json)
+    print("Server response after uploading Inputs:")
     print(r.text)
 
 def insertVideo(id, content):   
     fileContentB64 = base64.b64encode(content)
     json = {'playerID': id, 'fileContent': fileContentB64.decode('utf-8')}
     r = requests.post('http://127.0.0.1:5000/video', json=json)
-    print(r.text)
+    #print("Server response after uploading Video:")
+    #print(r.text)
 
 def verify(id):
     json = {'playerID': id}
     r = requests.post('http://127.0.0.1:5000/verify', json=json)
+    print("Server response after verifying:")
     print(r.text)
 
 # Main game function
@@ -308,19 +312,29 @@ async def main():
     #print(testF.getvalue())
     #id = int(random.random() * 1000000)
     id = 334486
-    print("id: " + str(id))
+    print("Upload the video through the app with this id!")
+    print("Game id: " + str(id))
+    print("")
     content = bytes(testF.getvalue(), 'utf-8')
     print("you got a score of: " + str(points))
+    print("")
     try:
         insertInput(id,content)
+        print("")
         insertVideo(id,b'testtest')
         print("Uploaded inputs to server!")
     except:
         print("No connection to server")
-    input()
-    try:
-        verify(id)
-    except:
-        print("No connection to server")
+
+    print("")
+    print("Do you want to verify your result? [y] [n]")
+    s = input()
+    if s == "y":
+        try:
+            print("")
+            verify(id)
+        except:
+            print("No connection to server")
+    
 if __name__ == "__main__":
     asyncio.run(main()) # Call the main() function to run the game
