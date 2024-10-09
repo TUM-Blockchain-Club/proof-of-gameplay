@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import os
+import yaml
 from glob import glob
 
 class KeypressDataset(Dataset):
@@ -21,12 +22,14 @@ class KeypressDataset(Dataset):
         self.sequence_length_future = sequence_length_future
         self.sequence_length = sequence_length_past + sequence_length_future
         self.transform = transform
-        self.file_pairs = self._get_file_pairs()
+        self.file_pairs = self._get_file_tuples()
         self.sequence_indices = self._get_sequence_indices()
+        self.keypresses_num = self._get_keypresses_num()
+        self.non_keypresses_num = len(self) - self.keypresses_num
     
-    def _get_file_pairs(self):
+    def _get_file_tuples(self):
         """
-        Get list of tuples containing data file paths and their corresponding label file paths.
+        Get list of tuples containing data file paths and their corresponding label and config file paths.
         """
         data_files = sorted(glob(os.path.join(self.data_dir, '*.npy')))
         # Exclude label files and files with names in the ignore list
@@ -35,7 +38,8 @@ class KeypressDataset(Dataset):
             if not f.endswith('_labels.npy') and os.path.basename(f).split('.')[0] not in self.ignore
         ]
         label_files = [f.replace('.npy', '_labels.npy') for f in data_files]
-        return list(zip(data_files, label_files))
+        config_files = [f.replace('.npy', '_config.yaml') for f in data_files]
+        return list(zip(data_files, label_files, config_files))
     
     def _get_sequence_indices(self):
         """
@@ -43,7 +47,7 @@ class KeypressDataset(Dataset):
         Each element is a tuple: (file_idx, frame_idx)
         """
         sequence_indices = []
-        for file_idx, (data_file, label_file) in enumerate(self.file_pairs):
+        for file_idx, (data_file, label_file, config_file) in enumerate(self.file_pairs):
             # Get the number of frames in this video
             data_shape = np.load(data_file, mmap_mode='r').shape
             num_frames = data_shape[0]
@@ -53,6 +57,18 @@ class KeypressDataset(Dataset):
                 for frame_idx in range(self.sequence_length_past, num_frames - self.sequence_length_future):
                     sequence_indices.append((file_idx, frame_idx))
         return sequence_indices
+
+    def _get_keypresses_num(self):
+        """
+        Get the number of keypress events in the dataset.
+        """
+        keypresses_num = 0
+        for file_idx, (data_file, label_file, config_file) in enumerate(self.file_pairs):
+            # open config yaml file
+            with open(config_file, 'r') as f:
+                config = yaml.load(f, Loader=yaml.FullLoader)
+                keypresses_num += config['keypresses_num']
+        return keypresses_num
 
     def __len__(self):
         return len(self.sequence_indices)
@@ -64,7 +80,7 @@ class KeypressDataset(Dataset):
             label: Tensor of shape (num_classes)
         """
         file_idx, frame_idx = self.sequence_indices[idx]
-        data_file, label_file = self.file_pairs[file_idx]
+        data_file, label_file, _ = self.file_pairs[file_idx]
         
         # Use np.memmap to access the frames and labels without loading the entire file
         frames_memmap = np.load(data_file, mmap_mode='r')

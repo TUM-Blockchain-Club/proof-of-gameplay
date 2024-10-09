@@ -12,6 +12,25 @@ from sklearn.metrics import precision_recall_fscore_support
 from dataset import KeypressDataset
 from model import Keypress3DCNN
 
+# Checkpoint functions
+def save_checkpoint(state, filename='checkpoint.pth.tar'):
+    torch.save(state, filename)
+    print(f'Checkpoint saved to {filename}')
+
+def load_checkpoint(model, optimizer, filename='checkpoint.pth.tar'):
+    if os.path.isfile(filename):
+        print(f'Loading checkpoint from {filename}...')
+        checkpoint = torch.load(filename)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        epoch = checkpoint['epoch']
+        loss = checkpoint['loss']
+        print(f'Checkpoint loaded. Resuming from epoch {epoch}')
+        return epoch, loss
+    else:
+        print(f'No checkpoint found at {filename}. Starting from scratch.')
+        return 0, None
+
 if __name__ == '__main__':
 
     # Check if hardware acceleration is available
@@ -52,9 +71,14 @@ if __name__ == '__main__':
     train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler, num_workers=4, pin_memory=True)
     val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler, num_workers=4, pin_memory=True)
 
+    # Calculate class weights (inverse of class frequency)
+    keypresses_weight = 1 / dataset.keypresses_num
+    non_keypresses_weight = 1 / dataset.non_keypresses_num
+    class_weights = torch.tensor([non_keypresses_weight, keypresses_weight], device=device)
 
     # Define model, loss function, and optimizer
     model = Keypress3DCNN(num_classes).to(device)
+    # criterion = nn.BCELoss(weight=class_weights)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-5)
 

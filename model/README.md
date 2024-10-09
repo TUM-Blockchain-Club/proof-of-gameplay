@@ -44,10 +44,10 @@ To store the raw video files, we use [DVC](https://dvc.org/doc) for version cont
 2. For each file, a window will pop up asking you to select the frame where the first key press occurs. This is to match the key press events with the video frames.
 3. Three new files will be created in the `data/processed/` directory: 
    - `<file-name>.npy`: Inputs
-   - `<file-name>_labels.npy` Labels
-   - `<file-name>_config.yaml` Syncronization info for inputs and labels
+   - `<file-name>_labels.npy`: Labels
+   - `<file-name>_config.yaml`: Syncronization info for inputs and labels
 
-    <br>
+   <br>
    Example: `typing_mixed_1_lucas_1.npy`, `typing_mixed_1_lucas_1_labels.npy`, and `typing_mixed_1_lucas_1_config.yaml`. Furthermore, the `keys.names` file will be updated with any new keys found in the data.
 
 <p align="center" style="max-width: 400px;">

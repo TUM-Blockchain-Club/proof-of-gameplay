@@ -1,6 +1,6 @@
 [project]
 authors = [{name = "Lucas Aschenbach", email = "Lucas.Aschenbach@gmail.com"}]
-dependencies = ["mediapipe>=0.10.15,<0.11"]
+dependencies = ["mediapipe>=0.10.15,<0.11", "pyyaml>=6.0.2,<7"]
 description = "Add a short description here"
 name = "model"
 requires-python = ">= 3.11"
@@ -28,3 +28,4 @@ python-dateutil = ">=2.9.0,<3"
 pytorch = ">=2.4.1,<3"
 torchvision = ">=0.19.1,<0.20"
 scikit-learn = ">=1.5.2,<2"
+yaml = ">=0.2.5,<0.3"
