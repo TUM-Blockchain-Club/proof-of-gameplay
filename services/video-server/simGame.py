@@ -1,8 +1,10 @@
 # In the future, run on the web like itch.io, gamejolt, etc
-
-import pygame 
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame
 import os
 import random
+import asyncio
 
 # Screen settings: width and height
 SCREEN_WIDTH = 500
@@ -217,12 +219,12 @@ def simulate(inputs):
         elif points >= 100:
             x = 40
 
-        frameTime = 1/x
-        if cnt < len(inputs) and aktTime < inputs[cnt]: #in this frame a jump was triggered
-            cnt += 1
-            for bird in birds:
-                bird.jump() # The bird jumps by calling the jump() function
-            
+        frameTime = 1/x - 0.0001 #magic because of non equal frame length...
+        if cnt < len(inputs):
+            if inputs[cnt] < aktTime + frameTime: #in this frame a jump was triggered
+                cnt += 1
+                for bird in birds:
+                    bird.jump() # The bird jumps by calling the jump() function
         # Bird movement
         for bird in birds:
             bird.move()
@@ -268,6 +270,5 @@ def simulate(inputs):
 
 
 if __name__ == "__main__":
-    print("")
-    #inputs = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-    #print(simulate(inputs))
+    inputs = [0.0, 0.8491907119750977, 1.4142272472381592, 1.8989994525909424, 2.4258410930633545, 2.9903972148895264, 3.43713641166687, 4.1636269092559814, 4.730172872543335, 5.296604871749878, 5.821712017059326, 6.062922954559326, 6.224619626998901, 6.709406137466431, 7.640908718109131, 8.043145179748535, 8.811955213546753, 9.216413021087646, 9.6601881980896, 10.546671390533447, 10.95087456703186, 11.435769319534302, 11.920541048049927, 12.122118473052979, 12.282597303390503]
+    print(simulate(inputs))

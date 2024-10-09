@@ -4,6 +4,11 @@ import pygame
 import os
 import random
 import asyncio
+import csv
+import time
+import requests
+import base64
+from io import StringIO
 
 # Screen settings: width and height
 SCREEN_WIDTH = 500
@@ -187,10 +192,15 @@ def draw_screen(screen, birds, pipes, ground, points): # Function to draw the ga
     ground.draw(screen) # Draw the ground on the screen
     pygame.display.update() # Update the screen
 
-
+def insertInput(id, content):
+    fileContentB64 = base64.b64encode(content)
+    json = {'playerID': id, 'fileContent': fileContentB64.decode('utf-8')}
+    r = requests.post('http://127.0.0.1:5000/inputs', json=json)
+    print(r.text)
 
 # Main game function
 async def main():
+    random.seed(1337)
     # Initialize the game, passing the width and height of the screen for each game element to each class and function
     birds = [Bird(230, 350)] # List of birds in the game
     ground = Ground(730) # Ground object
@@ -198,9 +208,15 @@ async def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # Game screen
     points = 0 # Game score
     clock = pygame.time.Clock() # Game clock
-
+    testF = StringIO()
+    #with open('inputs.csv', 'w', newline='') as csvfile:
+    fieldnames = ['timestamp', 'event']
+    writer = csv.DictWriter(testF, fieldnames=fieldnames)
+    writer.writeheader()
     running = True # Variable to check if the game is running
+    gameStart = False
     while running: # While the game is running
+        jumped = False
         if points >= 0 and points < 10:
             x = 25
             clock.tick(x) # Game FPS
@@ -230,46 +246,63 @@ async def main():
                 quit()
             if event.type == pygame.KEYDOWN: # If the event is pressing a key
                 if event.key == pygame.K_SPACE: # If the key pressed is the spacebar
+                    if gameStart == False:
+                        gameStart = True # The game starts at the first spacebar press
+                        startTime = time.time()
                     for bird in birds: # For each bird in the list of birds
                         bird.jump() # The bird jumps by calling the jump() function
+                        writer.writerow({'timestamp': str(time.time()), 'event': 'Key down'})
+                        jumped = True
+        if gameStart:    
+            # Bird movement
+            for bird in birds:
+                bird.move()
             
-        # Bird movement
-        for bird in birds:
-            bird.move()
-        
-        # Ground movement
-        ground.move()
+            # Ground movement
+            ground.move()
 
-        # Pipe movement
+            # Pipe movement
 
-        add_pipe = False
-        for pipe in pipes:
-            pipe.move()
+            add_pipe = False
             remove_pipe = []
+            for pipe in pipes:
+                pipe.move()
+                
 
-            for i, bird in enumerate(birds): # For each bird in the list of birds
-                if pipe.collide(bird): # If the bird collides with the pipe
+                for i, bird in enumerate(birds): # For each bird in the list of birds
+                    if pipe.collide(bird): # If the bird collides with the pipe
+                        birds.pop(i) # Remove the bird from the list of birds
+                    if not pipe.passed and bird.x > pipe.x: # If the bird passes the pipe
+                        pipe.passed = True
+                        add_pipe = True
+                pipe.move()
+                if pipe.x + pipe.TOP_PIPE.get_width() < 0: # If the pipe moves off the screen
+                    remove_pipe.append(pipe)
+
+            if add_pipe: # If a pipe is added
+                points += 1 # Increment the score
+                pipes.append(Pipe(600)) # Add a new pipe on the screen
+
+            for pipe in remove_pipe:
+                pipes.remove(pipe) # Remove the pipe from the list of pipes
+
+            for i, bird in enumerate(birds):
+                if (bird.y + bird.image.get_height()) > ground.y or bird.y < 0: # If the bird touches the ground or the ceiling
                     birds.pop(i) # Remove the bird from the list of birds
-                if not pipe.passed and bird.x > pipe.x: # If the bird passes the pipe
-                    pipe.passed = True
-                    add_pipe = True
-            pipe.move()
-            if pipe.x + pipe.TOP_PIPE.get_width() < 0: # If the pipe moves off the screen
-                remove_pipe.append(pipe)
-
-        if add_pipe: # If a pipe is added
-            points += 1 # Increment the score
-            pipes.append(Pipe(600)) # Add a new pipe on the screen
-
-        for pipe in remove_pipe:
-            pipes.remove(pipe) # Remove the pipe from the list of pipes
-
-        for i, bird in enumerate(birds):
-            if (bird.y + bird.image.get_height()) > ground.y or bird.y < 0: # If the bird touches the ground or the ceiling
-                birds.pop(i) # Remove the bird from the list of birds
-        
-        await asyncio.sleep(0) # Wait 0 seconds to update the screen
+            
+            #await asyncio.sleep(0) # Wait 0 seconds to update the screen
+            if len(birds) == 0:
+                running = False
         draw_screen(screen, birds, pipes, ground, points)
-
+    #print(testF.getvalue())
+    id = int(random.random() * 1000000)
+    print("id: " + str(id))
+    content = bytes(testF.getvalue(), 'utf-8')
+    print("you got a score of: " + str(points))
+    try:
+        insertInput(id,content)
+        print("Uploaded inputs to server!")
+    except:
+        print("No connection to server")
 if __name__ == "__main__":
     asyncio.run(main()) # Call the main() function to run the game

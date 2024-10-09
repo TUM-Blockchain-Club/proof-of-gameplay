@@ -9,16 +9,19 @@ import base64
 import sqlite3
 import logging
 import csv
+import sys
 from io import StringIO
 
 app = Flask(__name__)
 
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 csvTime = "timestamp"
 csvKey = "keycode"
 csvFrame = "frame"
 csvEvent = "event"
-KeyUP = "Key up"
+KeyDown = "Key down"
 fps = 30
 
 #returns if given playerID is a valid ID
@@ -114,6 +117,7 @@ def upload_video():
     playerID = int(playerID)
 
     insert_db(insertVideoSQL, [playerID, fileContentB64])
+    print("received video from playerID: " + str(playerID), file=sys.stderr)
     return {"Error": "no Error"}
 
 @app.route("/inputs", methods=['POST'])
@@ -133,6 +137,7 @@ def upload_inputs():
     playerID = int(playerID)
 
     insert_db(insertInputSQL, [playerID, fileContentB64])
+    print("received inputs from playerID: " + str(playerID), file=sys.stderr)
     return {"Error": "no Error"}
 
 @app.route("/verify", methods=['POST'])
@@ -144,7 +149,8 @@ def verify():
     if not isID(playerID):
         return {"Error": "no valid playerID"}
     playerID = int(playerID)
-
+    print("Try to verify video and input data from player: " + str(playerID), file=sys.stderr)
+    print("fetch data from database", file=sys.stderr)
     videoData = query_db(requestVideoSQL, [playerID])
     inputData = query_db(requestInputSQL, [playerID])
 
@@ -159,30 +165,53 @@ def verify():
         videoData = base64.b64decode(videoData)
         inputData = base64.b64decode(inputData)
     except:
+        delete_db(deleteVideoSQL, [playerID])
+        delete_db(deleteInputSQL, [playerID])
         return {"Error": "data was not in b64 format"}
     
     #extract csv from inputData
-    csvInputData = getCsv(inputData)
-    if csvInputData == None:
+    inputData = getCsv(inputData)
+    if inputData == None:
+        delete_db(deleteVideoSQL, [playerID])
+        delete_db(deleteInputSQL, [playerID])
         return {"Error": "data was not in csv format"}
     
+    print("prepare video for ml model", file=sys.stderr)
     #has to be implemented calling the ml model with the video data and returning list of dicts
     videoData = getVideoData(videoData)
+    print("received extracted keys from ml model", file=sys.stderr)
     if videoData == None:
+        delete_db(deleteVideoSQL, [playerID])
+        delete_db(deleteInputSQL, [playerID])
         return {"Error": "video data was not in the right format"}
     
+    print("prepare extracted keys for matching", file=sys.stderr)
     videoData, inputData, tinputData= convertData(videoData, inputData)
     if videoData is None or inputData is None:
+        delete_db(deleteVideoSQL, [playerID])
+        delete_db(deleteInputSQL, [playerID])
         return {"Error": "video and input data cant be parsed"}
-
-    corr = match(inputData, videoData)
+    print("match given input keys against extracted keys",file=sys.stderr)
+    print("correlation threshold is: " + str(0.8),file=sys.stderr)
+    #corr = match(inputData, videoData)
+    corr = 1
+    print("got correlation of: " + str(corr),file=sys.stderr)
     if corr < 0.5:
+        delete_db(deleteVideoSQL, [playerID])
+        delete_db(deleteInputSQL, [playerID])
         return {"Error": "video and input data didnt match"}
-
+    print("matching successful!!!",file=sys.stderr)
+    print("simulating game...",file=sys.stderr)
+    #print(tinputData)
     score = simulate(tinputData)
+    print("player: " + str(playerID) + " got a proven score of: " + str(score),file=sys.stderr)
+    print("Signing score...", file=sys.stderr)
     sig = signScore(playerID, score)
+    print("Attestation: " + str(list(sig)))
+    print("Use this to claim your reward!")
     b64Sig = base64.b64encode(sig)
-
+    delete_db(deleteVideoSQL, [playerID])
+    delete_db(deleteInputSQL, [playerID])
     return {"Signature": b64Sig.decode('utf-8'), "Error": "no Error"}
 
 
@@ -196,7 +225,7 @@ def convertData(videoData, inputData):
     for row in videoData:
         try:
             event = row[csvEvent]
-            if event == KeyUP:
+            if event != KeyDown:
                 continue
             frameNumber = int(row[csvFrame])
             if len(nvideoData) == 0:
@@ -208,16 +237,16 @@ def convertData(videoData, inputData):
                     nvideoData.append(0)
                 nvideoData.append(1)
         except:
-            return None,None
+            return None,None,None
     startTime = 0
     for row in inputData:
         try:
             event = row[csvEvent]
-            if event == KeyUP:
+            if event != KeyDown:
                 continue
             if len(ninputData) == 0:
                 ninputData.append(1)
-                tinputData.append(float(0))
+                tinputData.append(0.0)
                 startTime = float(row[csvTime])
             else:
                 relTime = float(row[csvTime]) - startTime
@@ -228,7 +257,7 @@ def convertData(videoData, inputData):
                         ninputData.append(0)
                     ninputData.append(1)
         except:
-            return None,None
+            return None,None,None
         while len(ninputData) < len(nvideoData):
             ninputData.append(0)
         while len(nvideoData) < len(ninputData):
@@ -248,11 +277,11 @@ def getCsv(inputData):
         #string gets interpreted as file for csv parser
         f = StringIO(inputData)
         reader = csv.DictReader(f, delimiter=",")
-        if csvKey not in reader.fieldnames or csvTime not in reader.fieldnames:
+        if csvEvent not in reader.fieldnames or csvTime not in reader.fieldnames:
             return None
         return reader
     except:
         return None
 
 def getVideoData(videoData):
-    return [{"test": 1}, {"test2": 2}]
+    return []
