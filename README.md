@@ -2,7 +2,7 @@
 
 ![Proof of Gameplay](docs/assets/pog-banner.png)
 
-Do use the Project first start the video server in:
+to use the Project first start the video server in:
 ```
 services/video-server
 ```
