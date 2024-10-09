@@ -61,7 +61,7 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
     if os.path.exists(config_path) and not force:
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
-            if config['timestamp_start'] and config['frame_num'] and config['frame_rate']:
+            if config['timestamp_start'] and config['frame_num'] and config['frame_rate'] and config['keypresses_num'] and config['non_keypresses_num']:
                 print("Synchronization info taken from config file. Use -f to overwrite.")
                 return config['timestamp_start'], config['frame_num'], config['frame_rate']
             elif config['timestamp_start']:
@@ -77,6 +77,9 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
     cap = cv2.VideoCapture(video_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    total_keypresses = len(keypress_events)
+
+    print(f"Video: {video_path}")
 
     if timestamp_start is None:
     
@@ -174,32 +177,34 @@ def sync_video(video_path, keypress_csv, config_path, force=False):
             # Ensure current_frame stays within bounds
             current_frame = max(0, min(current_frame, total_frames - 1))
 
+        # Compute timestamp of first frame base on the sync frames
+        # t_0 needs to satisfy round((t_i - t_0) * fps) = f_i
+        timestamp_start_lower_bound = None
+        timestamp_start_upper_bound = None
+        for idx, sync_frame in enumerate(sync_frames):
+            upper_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame - 0.5) / fps)
+            lower_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame + 0.5) / fps)
+            if timestamp_start_lower_bound is None or lower_bound > timestamp_start_lower_bound:
+                timestamp_start_lower_bound = lower_bound
+            if timestamp_start_upper_bound is None or upper_bound < timestamp_start_upper_bound:
+                timestamp_start_upper_bound = upper_bound
+        # Compute midpoint of upper and lower bound
+        timestamp_start = (timestamp_start_lower_bound + timestamp_start_upper_bound) / 2
+        timestamp_start = timestamp_start.item()
+        print(f"Timestamp precision: {timestamp_start_upper_bound - timestamp_start_lower_bound}")
+        print(f"Timestamps for sync frames: {timestamp_start}")
+
     cap.release()
     cv2.destroyAllWindows()
-
-    # Compute timestamp of first frame base on the sync frames
-    # t_0 needs to satisfy round((t_i - t_0) * fps) = f_i
-    timestamp_start_lower_bound = None
-    timestamp_start_upper_bound = None
-    for idx, sync_frame in enumerate(sync_frames):
-        upper_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame - 0.5) / fps)
-        lower_bound = keypress_events.iloc[idx]['timestamp'] - ((sync_frame + 0.5) / fps)
-        if timestamp_start_lower_bound is None or lower_bound > timestamp_start_lower_bound:
-            timestamp_start_lower_bound = lower_bound
-        if timestamp_start_upper_bound is None or upper_bound < timestamp_start_upper_bound:
-            timestamp_start_upper_bound = upper_bound
-    # Compute midpoint of upper and lower bound
-    timestamp_start = (timestamp_start_lower_bound + timestamp_start_upper_bound) / 2
-    timestamp_start = timestamp_start.item()
-    print(f"Timestamp precision: {timestamp_start_upper_bound - timestamp_start_lower_bound}")
-    print(f"Timestamps for sync frames: {timestamp_start}")
 
     # Save synchronization info to a config file
     if config_path is not None:
         config = {
             'timestamp_start': timestamp_start,
             'frame_num': total_frames,
-            'frame_rate': fps
+            'frame_rate': fps,
+            'keypresses_num': total_keypresses,
+            'non_keypresses_num': total_frames - total_keypresses
         }
         with open(config_path, 'w') as f:
             yaml.dump(config, f)
