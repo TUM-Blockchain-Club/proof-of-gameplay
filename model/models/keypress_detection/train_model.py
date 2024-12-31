@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # Load processed data into Dataset
     dataset = KeypressDataset(
-        data_dir='data/processed',
+        data_dir='data/keypress_detection/processed',
         ignore=['typing_alphabetic_1_gopi_1', 'typing_alphabetic_1_lucas_1'],
         num_classes=num_classes,
         sequence_length_past=8,
