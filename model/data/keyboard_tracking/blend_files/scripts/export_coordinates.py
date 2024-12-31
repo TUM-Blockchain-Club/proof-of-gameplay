@@ -18,8 +18,8 @@ def get_2d_coordinates(obj, camera, depsgraph):
     resolution_x = render.resolution_x * render.resolution_percentage / 100
     resolution_y = render.resolution_y * render.resolution_percentage / 100
     
-    x = int(co_camera.x * resolution_x)
-    y = int((1 - co_camera.y) * resolution_y)  # Flip Y-axis
+    x = co_camera.x * resolution_x
+    y = (1 - co_camera.y) * resolution_y  # Flip Y-axis
     
     return (x, y)
 
@@ -48,6 +48,7 @@ def save_empty_positions_to_csv(filepath):
     scene = bpy.context.scene
     start_frame = scene.frame_start
     end_frame = scene.frame_end
+    step = scene.frame_step
 
     # Open CSV file for writing
     with open(filepath, 'w', newline='') as csvfile:
@@ -58,7 +59,7 @@ def save_empty_positions_to_csv(filepath):
         csvwriter.writerow(header)
 
         # Iterate through all frames in the animation
-        for frame in range(start_frame, end_frame + 1):
+        for frame in range(start_frame, end_frame + 1, step):
             scene.frame_set(frame)  # Set the current frame
             row = [frame]
             
