@@ -110,4 +110,4 @@ if __name__ == '__main__':
         inputs_path = os.path.join('processed', f"{file_name}.npy")
         labels_path = os.path.join('processed', f"{file_name}_labels.npy")
 
-        preview_data(inputs_path, labels_path, 'keys.names', show_all_events)
+        preview_data(inputs_path, labels_path, '../keys.names', show_all_events)

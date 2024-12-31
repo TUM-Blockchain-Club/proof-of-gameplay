@@ -9,8 +9,10 @@ print("Recording key presses and releases.")
 print("Press 'Ctrl+C' to stop the logger.")
 print("------------------------------------------")
 
+output_path = os.path.join(os.path.dirname(__file__), 'key_log.csv')
+
 # Open the CSV file for writing
-with open('key_log.csv', 'w', newline='', buffering=1) as csvfile:
+with open(output_path, 'w', newline='', buffering=1) as csvfile:
     fieldnames = ['timestamp', 'key-name', 'key-char', 'key-vk', 'event-type', 'duration']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()

@@ -299,4 +299,4 @@ if __name__ == "__main__":
         update_key_names(csv_path)
 
         timestamp_start, frame_num, frame_rate = sync_video(video_path, csv_path, config_path, force)
-        generate_labels(csv_path, 'keys.names', labels_path, timestamp_start, frame_num, frame_rate, force)
+        generate_labels(csv_path, '../keys.names', labels_path, timestamp_start, frame_num, frame_rate, force)
