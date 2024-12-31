@@ -6,7 +6,7 @@ data/**/*.npz
 data/keyboard_tracking/raw/*/
 
 # Python
-src/__pycache__
+**/__pycache__
 
 # direnv
 .envrc
