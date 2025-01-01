@@ -35,10 +35,10 @@ def save_empty_positions_to_csv(filepath):
     depsgraph = bpy.context.evaluated_depsgraph_get()
 
     # Names of the empties to track
-    target_names = ["keyboard-lt", "keyboard-lb", "keyboard-rt", "keyboard-rb"]
+    target_names = [f"keyboard-lt", "keyboard-lb", "keyboard-rt", "keyboard-rb"]
 
-    # Filter the empties by name
-    empties = {name: bpy.data.objects.get(name) for name in target_names if bpy.data.objects.get(name) is not None}
+    # Find empties in scene starting with the specified target names
+    empties = {name: next((obj for obj in bpy.context.scene.objects if obj.name.startswith(name)), None) for name in target_names}
 
     if not empties:
         print("None of the specified empties were found in the scene.")
@@ -84,18 +84,18 @@ if __name__ == '__main__':
     raw_dir = os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), "../raw"))
     label_dir = os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), "../labels"))
 
-    print(raw_dir)
-    print(label_dir)
-
     # Ensure directories exist
     os.makedirs(raw_dir, exist_ok=True)
     os.makedirs(label_dir, exist_ok=True)
 
-    num_label_files = len([name for name in os.listdir(label_dir) if name.endswith(".csv")])
-    idx = num_label_files + 1
+    label_files = os.listdir(label_dir)
+    base_name = bpy.context.scene.name
+    name_collisions = [f for f in label_files if f.startswith(base_name)]
+    if name_collisions:
+        print(f"Warning: {len(name_collisions)} files with the same scene name already exist in the labels directory.")
+        base_name += f"-{len(name_collisions) + 1}"
 
-    base_name = f"{bpy.context.scene.name}-{idx}"
-    raw_filepath = f"{raw_dir}/{base_name}-#####.png"
+    raw_filepath = f"{raw_dir}/{base_name}/{base_name}-#####.png"
     label_filepath = f"{label_dir}/{base_name}.csv"
 
     # print(f"Rendering frames to {raw_filepath}")
