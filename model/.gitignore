@@ -6,6 +6,8 @@ data/**/*.npz
 data/keyboard_tracking/raw/*/
 data/keyboard_tracking/blend_files/assets
 
+**/*.blend[0-9]*
+
 # Python
 **/__pycache__
 
