@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "flappy-bird"
+version = "0.1.0"
+description = ""
+authors = ["Luis"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pygame-2048 = "^1.9.4"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

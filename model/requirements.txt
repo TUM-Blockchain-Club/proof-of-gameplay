@@ -1,4 +1,0 @@
-pynput
-
-opencv-python
-mediapipe

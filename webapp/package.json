@@ -1,0 +1,40 @@
+{
+  "name": "pog-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@project-serum/anchor": "^0.26.0",
+    "@reown/appkit": "^1.1.0",
+    "@reown/appkit-adapter-solana": "^1.1.0",
+    "@reown/appkit-adapter-wagmi": "^1.1.0",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/wallet-adapter-solflare": "^0.6.28",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@tanstack/react-query": "^5.59.0",
+    "bn.js": "^5.2.1",
+    "next": "14.2.14",
+    "react": "^18",
+    "react-dom": "^18",
+    "viem": "^2.21.19",
+    "wagmi": "^2.12.17"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.14",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

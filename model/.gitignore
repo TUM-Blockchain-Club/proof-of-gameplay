@@ -1,2 +1,15 @@
-data/*.mp4
-src/__pycache__
+# Dvc tracked files
+data/**/*.mp4
+data/**/*.npy
+data/**/*.npz
+
+data/keyboard_tracking/raw/*/
+data/keyboard_tracking/blend_files/assets
+
+**/*.blend[0-9]*
+
+# Python
+**/__pycache__
+
+# direnv
+.envrc

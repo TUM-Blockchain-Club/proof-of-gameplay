@@ -1,0 +1,95 @@
+Control_L Control_L
+Shift_R Shift_R Shift_R
+Space Space
+Command_L Command_L
+A A
+Shift_L Shift_L Shift_L
+1 1
+Option_R Option_R Option_R
+Command_R
+L L L
+Control_R Control_R
+Command_L
+X X X
+Shift_R Shift_R
+A A
+Command_R
+5 5
+Option_L Option_L
+Shift_L Shift_L
+8 8
+Control_L Control_L
+Option_R
+Q Q
+E E
+Control_R Control_R Control_R
+Enter Enter Enter
+Command_R Command_R Command_R
+Control_L
+Space Space Space Space
+B B B
+Option_R Option_R
+Control_L
+Tab Tab
+Shift_L Shift_L
+Command_L Command_L
+Caps_Lock Caps_Lock
+Command_R
+Shift_R Shift_R Shift_R Shift_R
+Control_R Control_R
+Command_R
+7 7 7 7
+Option_L Option_L
+H H
+D D
+Up_Arrow
+J J J
+Left_Arrow Left_Arrow
+I I I
+Down_Arrow Down_Arrow Down_Arrow
+Option_R Option_R Option_R
+Control_R
+Enter Enter Enter
+Command_L Command_L
+Shift_L Shift_L
+Tab Tab Tab
+Backspace Backspace Backspace
+Option_L Option_L
+6 6 6
+R R
+F F
+Control_R Control_R Control_R Control_R
+Command_R Command_R
+Shift_L Shift_L Shift_L
+Space Space Space
+2 2 2
+Command_L Command_L
+Option_L Option_L Option_L
+Delete Delete
+Right_Arrow Right_Arrow
+Control_L Control_L Control_L
+Shift_R Shift_R
+4 4 4
+Command_R Command_R
+Option_R Option_R
+Tab
+Space Space
+G G G
+9 9
+Esc Esc
+Command_L Command_L Command_L
+Shift_L Shift_L Shift_L
+Option_L Option_L
+C C C
+Left_Arrow Left_Arrow Left_Arrow
+P P P
+Down_Arrow
+Command_R Command_R Command_R
+0 0
+Tab Tab
+Command_L Command_L
+Shift_L Shift_L
+G G
+H H
+Option_L Option_L
+Esc Esc Esc

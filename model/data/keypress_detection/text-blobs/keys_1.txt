@@ -1,0 +1,89 @@
+A A A
+S S S S
+M M
+Z Z Z Z Z
+Q Q
+W W W
+E E E
+L L L L L
+R R
+D D
+O O O
+P P P P P
+F F
+G G G G
+I I I I
+J J
+N N N
+K K K
+H H H H
+X X X
+C C C C
+U U
+Y Y Y Y Y
+T T
+V V V
+B B
+Z Z
+S S
+L L
+A A A A
+P P
+K K
+N N N N N
+M M
+H H
+E E
+Q Q Q
+W W
+O O
+U U U U
+F F F
+J J J
+R R
+T T
+G G G G
+X X
+B B B
+I I
+C C C C
+V V V
+Y Y
+Z Z
+D D D
+O O O O
+A A A
+M M M M
+W W
+N N
+T T T T
+J J
+K K
+H H
+S S S
+Q Q
+U U
+L L L
+F F
+R R R
+G G
+I I
+P P P
+E E
+X X
+Z Z
+B B B
+O O
+C C C
+V V
+T T T
+N N
+Y Y
+W W W W
+M M
+D D D
+A A A
+J J J
+K K
+P P P
+S S
