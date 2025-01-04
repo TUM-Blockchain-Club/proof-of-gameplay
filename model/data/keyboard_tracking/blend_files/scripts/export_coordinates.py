@@ -35,7 +35,7 @@ def save_empty_positions_to_csv(filepath):
     depsgraph = bpy.context.evaluated_depsgraph_get()
 
     # Names of the empties to track
-    target_names = [f"keyboard-lt", "keyboard-lb", "keyboard-rt", "keyboard-rb"]
+    target_names = ["keyboard-lt", "keyboard-lb", "keyboard-rt", "keyboard-rb"]
 
     # Find empties in scene starting with the specified target names
     empties = {name: next((obj for obj in bpy.context.scene.objects if obj.name.startswith(name)), None) for name in target_names}
