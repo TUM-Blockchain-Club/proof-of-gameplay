@@ -5,6 +5,7 @@ data/**/*.npz
 
 data/keyboard_tracking/raw/*/
 data/keyboard_tracking/blend_files/assets
+data/keyboard_tracking/blend_files/keyboard_scenes.blend
 
 **/*.blend[0-9]*
 
