@@ -82,7 +82,7 @@ def save_empty_positions_to_csv(filepath):
 if __name__ == '__main__':
     # Specify directories
     raw_dir = os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), "../raw"))
-    label_dir = os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), "../labels"))
+    label_dir = os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), "../labels_keypoints"))
 
     # Ensure directories exist
     os.makedirs(raw_dir, exist_ok=True)
